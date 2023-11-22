@@ -1,0 +1,97 @@
+{
+  "ReRoutes": [
+    {
+      "DownstreamPathTemplate": "/api/Delivery/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7027
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Delivery/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post" ]
+    },
+    {
+      "DownstreamPathTemplate": "/delivery/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5191
+        }
+      ],
+      "UpstreamPathTemplate": "/delivery/{everything}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    {
+      "DownstreamPathTemplate": "/orders/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5087
+        }
+      ],
+      "UpstreamPathTemplate": "/Orders/{everything}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    {
+      "DownstreamPathTemplate": "/Catalog/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5087
+        }
+      ],
+      "UpstreamPathTemplate": "/orders/{everything}",
+      "UpstreamHttpMethod": [ "Get" ]
+    }
+  ],
+  "SwaggerEndPoints": [
+    {
+      "Key": "Catalog",
+      "Config": [
+        {
+          "Name": "Catalog Api",
+          "Version": "v1",
+          "Url": "https://localhost:7186/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "Delivery",
+      "Config": [
+        {
+          "Name": "Delivery Api",
+          "Version": "v1",
+          "Url": "https://localhost:7027/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "Order",
+      "Config": [
+        {
+          "Name": "Order Api",
+          "Version": "v1",
+          "Url": "https://localhost:7228/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "Authenticator",
+      "Config": [
+        {
+          "Name": "Authenticator Api",
+          "Version": "v1",
+          "Url": "https://localhost:7189/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5000"
+  }
+}

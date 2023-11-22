@@ -1,0 +1,41 @@
+using DeliveryMicroservice;
+using DeliveryMicroservice.Repositories;
+using DeliveryMicroservice.Services;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+//Добавления контекста базы данных
+builder.Services.AddDbContext<DeliveryDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//Репозиторий
+builder.Services.AddScoped(typeof(IDeliveryRepository), typeof(DeliveryRepository));
+
+//Сервис
+builder.Services.AddTransient<IDeliveryService, DeliveryService>();
+
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
