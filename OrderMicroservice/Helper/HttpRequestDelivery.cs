@@ -9,7 +9,7 @@ namespace OrderMicroservice.Helper
     {
         public async Task<HttpResponseMessage> SendPostRequest(Guid orderId)
         {
-            string url = "https://localhost:7027/api/Delivery";
+            string url = "https://localhost:7009/api/DeliveryMicroservice/Delivery";
 
 
             using (HttpClient httpClient = new HttpClient())
