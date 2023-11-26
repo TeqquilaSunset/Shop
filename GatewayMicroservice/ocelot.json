@@ -1,7 +1,7 @@
 {
-  "ReRoutes": [
+  "Routes": [
     {
-      "DownstreamPathTemplate": "/api/Delivery/{everything}",
+      "DownstreamPathTemplate": "/api/Delivery",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -9,89 +9,83 @@
           "Port": 7027
         }
       ],
-      "UpstreamPathTemplate": "/api/Delivery/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post" ]
+      "UpstreamPathTemplate": "/DeliveryMicroservice/api/Delivery",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "SwaggerKey": "DeliveryMicroservice"
     },
     {
-      "DownstreamPathTemplate": "/delivery/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/Order/{id}",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5191
+          "Port": 7228
         }
       ],
-      "UpstreamPathTemplate": "/delivery/{everything}",
-      "UpstreamHttpMethod": [ "Get" ]
+      "UpstreamPathTemplate": "/OrderMicroservice/api/Order/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+      "SwaggerKey": "OrderMicroservice"
     },
     {
-      "DownstreamPathTemplate": "/orders/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/Order",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5087
+          "Port": 7228
         }
       ],
-      "UpstreamPathTemplate": "/Orders/{everything}",
-      "UpstreamHttpMethod": [ "Get" ]
+      "UpstreamPathTemplate": "/OrderMicroservice/api/Order",
+      "UpstreamHttpMethod": [ "Get", "Put" ],
+      "SwaggerKey": "OrderMicroservice"
     },
     {
-      "DownstreamPathTemplate": "/Catalog/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/Order/create-order",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5087
+          "Port": 7228
         }
       ],
-      "UpstreamPathTemplate": "/orders/{everything}",
-      "UpstreamHttpMethod": [ "Get" ]
+      "UpstreamPathTemplate": "/OrderMicroservice/api/Order/create-order",
+      "UpstreamHttpMethod": [ "Post" ],
+      "SwaggerKey": "OrderMicroservice"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Order/cancel-order/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7228
+        }
+      ],
+      "UpstreamPathTemplate": "/OrderMicroservice/api/Order/cancel-order/{id}",
+      "UpstreamHttpMethod": [ "Put" ],
+      "SwaggerKey": "OrderMicroservice"
     }
   ],
   "SwaggerEndPoints": [
     {
-      "Key": "Catalog",
+      "Key": "DeliveryMicroservice",
       "Config": [
         {
-          "Name": "Catalog Api",
-          "Version": "v1",
-          "Url": "https://localhost:7186/swagger/v1/swagger.json"
-        }
-      ]
-    },
-    {
-      "Key": "Delivery",
-      "Config": [
-        {
-          "Name": "Delivery Api",
-          "Version": "v1",
+          "Name": "Delivery Microservice",
+          "Version": "1.0",
           "Url": "https://localhost:7027/swagger/v1/swagger.json"
         }
       ]
     },
     {
-      "Key": "Order",
+      "Key": "OrderMicroservice",
       "Config": [
         {
-          "Name": "Order Api",
-          "Version": "v1",
+          "Name": "Order Microservice",
+          "Version": "1.0",
           "Url": "https://localhost:7228/swagger/v1/swagger.json"
         }
       ]
-    },
-    {
-      "Key": "Authenticator",
-      "Config": [
-        {
-          "Name": "Authenticator Api",
-          "Version": "v1",
-          "Url": "https://localhost:7189/swagger/v1/swagger.json"
-        }
-      ]
     }
-  ],
-  "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:5000"
-  }
+  ]
 }
