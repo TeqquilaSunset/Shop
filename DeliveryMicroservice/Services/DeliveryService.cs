@@ -17,10 +17,20 @@ namespace DeliveryMicroservice.Services
             return ressult;
         }
 
+        public async Task DeleteDeliveryAsync(Guid id)
+        {
+            await _deliveryRepository.DeleteDelivery(id);
+        }
+
         public async Task<IEnumerable<DeliveryOrder>> GetAllDeliveryAsync()
         {
             var ressult = await _deliveryRepository.GetAllDeliveryOrder();
             return ressult;
+        }
+
+        public async Task UpdateDeliveryAsync(DeliveryOrder deliveryOrder)
+        {
+            await _deliveryRepository.UpdateDelivery(deliveryOrder);
         }
     }
 }

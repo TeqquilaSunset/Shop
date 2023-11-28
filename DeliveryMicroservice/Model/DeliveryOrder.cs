@@ -6,6 +6,8 @@ namespace DeliveryMicroservice.Model
     {
         public Guid Id { get; set; }
         public Guid OrderId { get; set; }
+        public DateTime DeliveryDate { get; set; }
+        public string DeliveryAddress { get; set; }
 
         public bool Finished { get; set; } = false;
     }

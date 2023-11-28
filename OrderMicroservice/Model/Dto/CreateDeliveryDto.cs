@@ -1,13 +1,10 @@
-﻿namespace OrderMicroservice.Model
+﻿namespace OrderMicroservice.Model.Dto
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class DeliveryInfo
+    public class CreateDeliveryDto
     {
-        public Guid Id { get; set; }
         public Guid OrderId { get; set; }
         public DateTime DeliveryDate { get; set; }
         public string DeliveryAddress { get; set; }
+
     }
 }

@@ -21,6 +21,8 @@ builder.Services.AddScoped(typeof(IDeliveryRepository), typeof(DeliveryRepositor
 
 //Сервис
 builder.Services.AddTransient<IDeliveryService, DeliveryService>();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IApiService, ApiService>();
 
 
 var app = builder.Build();

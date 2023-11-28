@@ -36,7 +36,7 @@ namespace OrderMicroservice.Repositories
 
         public async Task<Order> GetByIdAsync(Guid id)
         {
-            var orderWithItems = _dbContext.Orders.Include(o => o.OrderItems).FirstOrDefault(o => o.Id == id);
+            var orderWithItems =  _dbContext.Orders.Include(o => o.OrderItems).FirstOrDefault(o => o.Id == id);
             return orderWithItems;
         }
 

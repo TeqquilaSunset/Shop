@@ -1,7 +1,5 @@
 ﻿using DeliveryMicroservice.Model;
 using DeliveryMicroservice.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeliveryMicroservice.Controllers
@@ -11,9 +9,11 @@ namespace DeliveryMicroservice.Controllers
     public class DeliveryController : ControllerBase
     {
         private IDeliveryService _deliveryService;
-        public DeliveryController(IDeliveryService deliveryService)
+        private IApiService _apiService;
+        public DeliveryController(IDeliveryService deliveryService, IApiService apiService)
         {
             _deliveryService = deliveryService;
+            _apiService = apiService;
         }
 
         [HttpGet]
@@ -27,6 +27,27 @@ namespace DeliveryMicroservice.Controllers
         public async Task<IActionResult> CreateDelivery(DeliveryOrder newDelivery)
         {
             var result = await _deliveryService.CreateDeliveryAsync(newDelivery);
+            return Ok(result);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateDelivery(DeliveryOrder newDelivery)
+        {
+            await _deliveryService.UpdateDeliveryAsync(newDelivery);
+            return Ok();
+        }
+
+        [HttpPut("collect-order")]
+        public async Task<IActionResult> CollectAnOrder(Guid orderId)
+        {
+            string url = "https://localhost:7009/OrderMicroservice/api/Order/update-order/";
+            var order = new
+            {
+                Id = orderId,
+                Status = OrderStatusEnum.OrderStatus.InDelivery,
+            };
+
+            var result = await _apiService.PutAsync(order, url);
             return Ok(result);
         }
     }
