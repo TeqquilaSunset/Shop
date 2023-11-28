@@ -53,7 +53,7 @@
       "SwaggerKey": "OrderMicroservice"
     },
     {
-      "DownstreamPathTemplate": "/api/Order/cancel-order/{id}",
+      "DownstreamPathTemplate": "/api/Order/update-order/",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -61,7 +61,7 @@
           "Port": 7228
         }
       ],
-      "UpstreamPathTemplate": "/OrderMicroservice/api/Order/cancel-order/{id}",
+      "UpstreamPathTemplate": "/OrderMicroservice/api/Order/update-order/",
       "UpstreamHttpMethod": [ "Put" ],
       "SwaggerKey": "OrderMicroservice"
     }

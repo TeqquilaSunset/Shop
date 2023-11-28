@@ -56,10 +56,11 @@ namespace OrderMicroservice.Services
             var product = _mapper.Map<Order>(orderDto);
             await _orderRepository.UpdateAsync(product);
         }
-        public async Task CancellOrder(Guid id)
+
+        public async Task UpdateStatus(Guid id, OrderStatus status)
         {
             var order = await _orderRepository.GetByIdAsync(id);
-            order.Status = OrderStatus.Canceled;
+            order.Status = status;
             await _orderRepository.UpdateAsync(order);
         }
 
@@ -67,7 +68,5 @@ namespace OrderMicroservice.Services
         {
             return orderItems.Sum(item => item.Quantity * item.Price);
         }
-
-        
     }
 }

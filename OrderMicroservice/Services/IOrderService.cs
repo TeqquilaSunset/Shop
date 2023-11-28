@@ -10,6 +10,6 @@ namespace OrderMicroservice.Services
         public Task<Guid> CreateOrderAsync(CreateOrderDto orderDto);
         public Task DeleteAsync(Guid id);
         public Task UpdateOrderAsync(CreateOrderDto orderDto);
-        public Task CancellOrder(Guid id);
+        public Task UpdateStatus(Guid id, OrderStatus status);
     }
 }

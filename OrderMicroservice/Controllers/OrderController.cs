@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using OrderMicroservice.Helper;
 using OrderMicroservice.Model.Dto;
 using OrderMicroservice.Services;
+using static System.Net.WebRequestMethods;
 
 namespace OrderMicroservice.Controllers
 {
@@ -13,10 +14,12 @@ namespace OrderMicroservice.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly IOrderItemService _orderItemService;
-        public OrderController(IOrderService orderService, IOrderItemService orderItemService)
+        private readonly IApiService _apiService;
+        public OrderController(IOrderService orderService, IOrderItemService orderItemService, IApiService apiService)
         {
             _orderService = orderService;
             _orderItemService = orderItemService;
+            _apiService = apiService;
         }
 
         [HttpGet("{id}")]
@@ -38,18 +41,22 @@ namespace OrderMicroservice.Controllers
         {
             var orderId = await _orderService.CreateOrderAsync(createOrderDto);
 
-            // Если доставка курьером не требуется, то выполните какие-то другие действия
             if (!createOrderDto.DeliveryByCourier)
             {
                 return Ok(orderId);
             }
             else
             {
-                // Если требуется доставка курьером,  выполните соответствующие действия
+                CreateDeliveryDto deliveryDto = new CreateDeliveryDto();
+                deliveryDto.OrderId = orderId;
+                deliveryDto.DeliveryDate = createOrderDto.DeliveryInfo.DeliveryDate;
+                deliveryDto.DeliveryAddress = createOrderDto.DeliveryInfo.DeliveryAddress;
+
                 //var deliveryInfo = createOrderDto.DeliveryInfo;
-                HttpRequestDelivery httpRequest = new();
-                var r = await httpRequest.SendPostRequest(orderId);
-                return Ok(r.Content);
+                var url = "https://localhost:7009/DeliveryMicroservice/api/Delivery";
+                var result = await _apiService.PostAsync(deliveryDto, url);
+                if(result.IsSuccessStatusCode)
+                    return Ok(result);
 
             }
             return BadRequest();
@@ -70,13 +77,13 @@ namespace OrderMicroservice.Controllers
             return Ok();
         }
 
-        [HttpPut("cancel-order/{id}")]
+        [HttpPut("update-order")]
         //[ProducesResponseType(StatusCodes.Status200OK)]
         //[ProducesResponseType(StatusCodes.Status502BadGateway)]
         //[Authorize(Roles = "Admin,Seller,Courier")]
-        public async Task<IActionResult> CancelOrder([FromBody] Guid id)
+        public async Task<IActionResult> CancelOrder([FromBody] UpdateOrder order)
         {
-            await _orderService.CancellOrder(id);
+            await _orderService.UpdateStatus(order.Id, order.Status);
             return Ok();
         }
     }
