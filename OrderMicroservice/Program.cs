@@ -76,17 +76,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-//определяет маршруты
+//Определяет маршруты
 app.UseRouting();
 
-//Определяет что делать с маршрутами
-
-app.UseHttpsRedirection();
-
-app.UseRouting();
-
+//Добавить эту строку для обработки авторизации
+app.UseAuthorization();
 app.MapControllers();
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+app.UseAuthentication();
 
 app.Run();

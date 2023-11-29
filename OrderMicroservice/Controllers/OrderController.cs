@@ -70,7 +70,7 @@ namespace OrderMicroservice.Controllers
                 deliveryDto.DeliveryAddress = createOrderDto.DeliveryInfo.DeliveryAddress;
 
                 var url = "https://localhost:7009/DeliveryMicroservice/api/Delivery";
-                string cookieToken = _httpContextAccessor.HttpContext.Request.Cookies["auth_access_token"];
+                string cookieToken = Request.Cookies["auth_access_token"];
                 var result = await _apiService.PostAsync(deliveryDto, url, cookieToken);
                 if (!result.IsSuccessStatusCode)
                     return BadRequest("Не удалось создать запрос на доставку");

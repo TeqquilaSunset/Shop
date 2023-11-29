@@ -103,6 +103,9 @@ namespace Shop
 
             app.MapControllers();
 
+            app.UseAuthorization();
+            app.UseAuthentication();
+
             app.Run();
         }
     }
