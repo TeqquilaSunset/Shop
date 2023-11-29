@@ -75,7 +75,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddAuthentication(opt =>
 {
-    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; //разобраться в чем прикол
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
     .AddJwtBearer(options =>
@@ -114,6 +114,7 @@ builder.Services.AddAuthentication(opt =>
 builder.Services.AddScoped<TokenService>();
 
 builder.Services.AddScoped<IUserServices, UserServices>();
+
 
 //AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));

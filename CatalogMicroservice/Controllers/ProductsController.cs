@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CatalogMicroservice.Services.Intefraces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shop.Model;
@@ -20,6 +21,11 @@ namespace Shop.Controllers
             _productService = productService;
         }
 
+        /// <summary>
+        /// Получить список всех продуктов
+        /// </summary>
+        /// <returns>Список всех продуктов</returns>
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -27,13 +33,24 @@ namespace Shop.Controllers
             return Ok(result);
         }
 
-        [HttpGet("id")]
+        /// <summary>
+        /// Получение продукта по id
+        /// </summary>
+        /// <param name="id"></param>
+        [AllowAnonymous]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _productService.GetProductAsync(id);
             return Ok(result);
         }
 
+        /// <summary>
+        /// Добавление нового продукта
+        /// </summary>
+        /// <param name="productDto"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Manager, Admin")]
         [HttpPost]
         public async Task<IActionResult> Create(ProductDto productDto)
         {
@@ -41,6 +58,12 @@ namespace Shop.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Обновление продукта
+        /// </summary>
+        /// <param name="productDto"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Manager, Admin")]
         [HttpPut]
         public async Task<IActionResult> Update(ProductDto productDto)
         {
@@ -48,6 +71,11 @@ namespace Shop.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Удаление продукта
+        /// </summary>
+        /// <param name="id"></param>
+        [Authorize(Roles ="Manager, Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

@@ -55,15 +55,14 @@ namespace AuthenticatorAPI.Controllers
         [HttpPost("registr")]
         public async Task<IActionResult> Register(Models.Request.RegisterRequest register)
         {
-            var result = await _userServices.RegisterUserAsync(register, "User");
+            var result = await _userServices.RegisterUserAsync(register, "Admin");
 
             if (result.Succeeded)
             {
                 return Ok("Register successful");
             }
-            //List<IdentityError> errorList = result.Errors.ToList();
-            //var errors = string.Join(", ", errorList.Select(e => e.Description));
-            return BadRequest(result.Errors); //Подумать над тем что лучше возвращать
+
+            return BadRequest(result.Errors);
         }
 
         /// <summary>
@@ -93,12 +92,14 @@ namespace AuthenticatorAPI.Controllers
             }
 
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            return BadRequest(result.Succeeded);
+            return BadRequest(ModelState);
         }
 
         /// <summary>
         /// Метод получения списка всех пользователей.
         /// </summary>
+        /// 
+        [Authorize(Roles = "Admin")]
         [HttpGet("users")]
         public async Task<IActionResult> GetAll()
         {
@@ -106,7 +107,7 @@ namespace AuthenticatorAPI.Controllers
         }
 
         /// <summary>
-        /// Метод удаления всех пользователей. (Требует роль "Admin")
+        /// Метод удаления всех пользователей.
         /// </summary>
         [Authorize(Roles = "Admin")]
         [HttpDelete("users")]
@@ -124,13 +125,21 @@ namespace AuthenticatorAPI.Controllers
             return Ok("All users have been successfully deleted");
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPost("add-role")]
+        public async Task<IActionResult> AddRoleForUser(AddRoleDto newRoleDto)
+        {
+            await _userServices.AddRoleForUser(newRoleDto.UserName, newRoleDto.RoleName);
+            return Ok();
+        }
+
         /// <summary>
         /// Метод обновления токена доступа по токену обновления.
         /// </summary>
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken(TokenModel tokenModel)
         {
-            var principal = _tokenService.GetPrincipalFromExpiredToken(_configuration, tokenModel.AccessToken);
+            var principal = _tokenService.GetPrincipalFromExpiredToken(_configuration, tokenModel.RefreshToken);
             var username = principal.Identity.Name;
 
             var user = await _userServices.FindUserByEmailAsync(username);

@@ -1,4 +1,5 @@
 ﻿using CatalogMicroservice.Services.Intefraces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatalogMicroservice.Controllers
@@ -14,6 +15,11 @@ namespace CatalogMicroservice.Controllers
             _catalogService = catalogService;
         }
 
+        /// <summary>
+        /// Получение каталога товаров
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetCatalog()
         {

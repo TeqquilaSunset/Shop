@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CatalogMicroservice.Services.Intefraces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,11 @@ namespace Shop.Controllers
             _brandService = brandService;
         }
 
+        /// <summary>
+        /// Получение всех брендов
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("all")]
         public async Task<IActionResult> GetAll()
         {
@@ -32,6 +38,12 @@ namespace Shop.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Получить бренд по id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -39,6 +51,12 @@ namespace Shop.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Создание нового брнеда
+        /// </summary>
+        /// <param name="brandDto"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Manager, Admin")]
         [HttpPost]
         public async Task<IActionResult> Create(BrandDto brandDto)
         {
@@ -46,6 +64,12 @@ namespace Shop.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Обновление бренда
+        /// </summary>
+        /// <param name="brandDto"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Manager, Admin")]
         [HttpPut]
         public async Task<IActionResult> Update(BrandDto brandDto)
         {
@@ -53,6 +77,12 @@ namespace Shop.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Удаление бренда
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Manager, Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

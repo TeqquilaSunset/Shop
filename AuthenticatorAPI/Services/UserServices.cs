@@ -19,6 +19,7 @@ namespace AuthenticatorAPI.Services
         {
             _userManager = userManager;
             _mappingProfile = mappingProfile;
+           //_roleManager = roleManager;
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()
@@ -30,12 +31,12 @@ namespace AuthenticatorAPI.Services
         {
             var newUser = _mappingProfile.Map<User>(newRegister);
             var result = await _userManager.CreateAsync(newUser, newRegister.Password);
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
                 return result;
             }
 
-            if (role == null) 
+            if (role == null)
             {
                 role = "User";
             }
@@ -49,5 +50,22 @@ namespace AuthenticatorAPI.Services
             return await _userManager.FindByEmailAsync(email);
         }
 
+        public async Task AddRoleForUser(string username, string role)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+
+            //Проверка существования роли
+            if (!await _roleManager.RoleExistsAsync(role))
+            {
+                throw new ApplicationException($"Role {role} does not exist.");
+            }
+
+            // Проверка присвоения роли
+            if (!await _userManager.IsInRoleAsync(user, role))
+            {
+                var result = await _userManager.AddToRoleAsync(user, role);
+            }
+            return;
+        }
     }
 }
