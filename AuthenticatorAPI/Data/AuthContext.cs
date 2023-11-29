@@ -24,7 +24,7 @@ namespace AuthenticatorAPI.Data
 
             //Надо как то по умнее сделать
             builder.Entity<IdentityRole>().HasData(new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" });
-            builder.Entity<IdentityRole>().HasData(new IdentityRole { Name = "Customer", NormalizedName = "CUSTOMER" });
+            builder.Entity<IdentityRole>().HasData(new IdentityRole { Name = "DeliveryMan", NormalizedName = "DELIVERYMAN" });
             builder.Entity<IdentityRole>().HasData(new IdentityRole { Name = "Manager", NormalizedName = "MANAGER" });
             builder.Entity<IdentityRole>().HasData(new IdentityRole { Name = "User", NormalizedName = "USER" });
         }
