@@ -2,7 +2,9 @@
 using AuthenticatorAPI.Models.Dto;
 using AuthenticatorAPI.Models.Request;
 using AuthenticatorAPI.Services;
+using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -80,9 +82,10 @@ namespace AuthenticatorAPI.Controllers
             {
                 var accessToken = _tokenService.CreateToken(user);
                 var refreshToken = _tokenService.GenerateRefreshToken();
-                _tokenService.SetRefreshToken(user, refreshToken);
+                await _tokenService.SetRefreshToken(user, refreshToken);
 
                 Response.Cookies.Append("auth_access_token", accessToken);
+                Response.Cookies.Append("refreshToken", refreshToken.Token);
                 return Ok(new { Message = "Login successful", AccessToken = accessToken, RefreshToken = refreshToken.Token });
             }
 
@@ -105,6 +108,19 @@ namespace AuthenticatorAPI.Controllers
         {
             return Ok(await _userServices.GetAllAsync());
         }
+        
+        /// <summary>
+        /// Получение списка ролей пользователя
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin")]
+        [HttpGet("roles/{username}")]
+        public async Task<IActionResult> GetRoleByUsername(string username)
+        {
+            var roles = await _userServices.GetRoleByUsernameAsync(username);
+            return Ok(roles);
+        }
 
         /// <summary>
         /// Метод удаления всех пользователей.
@@ -125,6 +141,11 @@ namespace AuthenticatorAPI.Controllers
             return Ok("All users have been successfully deleted");
         }
 
+        /// <summary>
+        /// Добавление роли пользователю
+        /// </summary>
+        /// <param name="newRoleDto"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin")]
         [HttpPost("add-role")]
         public async Task<IActionResult> AddRoleForUser(AddRoleDto newRoleDto)
@@ -134,19 +155,54 @@ namespace AuthenticatorAPI.Controllers
         }
 
         /// <summary>
+        /// Обновление ролей пользователя
+        /// </summary>
+        /// <param name="newRoleDto"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin")]
+        [HttpPut("update-role")]
+        public async Task<IActionResult> UpdateRoleUser(UpdateRolesDto newRoleDto)
+        {
+            await _userServices.UpdateRoleForUser(newRoleDto.Username, newRoleDto.Roles);
+            return Ok();
+        }
+
+
+
+        /// <summary>
         /// Метод обновления токена доступа по токену обновления.
         /// </summary>
+        [AllowAnonymous]
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken(TokenModel tokenModel)
+        public async Task<IActionResult> RefreshToken(TokenModel token)
         {
-            var principal = _tokenService.GetPrincipalFromExpiredToken(_configuration, tokenModel.RefreshToken);
+            //var accessToken = Request.Cookies["auth_access_token"];
+            //var refreshToken = Request.Cookies["refreshToken"];
+            
+            //if(accessToken == null || refreshToken == null)
+            //{
+            //    accessToken = tokenModel.AccessToken; 
+            //    refreshToken = tokenModel.RefreshToken;
+            //}
+
+            var principal = _tokenService.GetPrincipalFromExpiredToken(_configuration, token.AccessToken);
             var username = principal.Identity.Name;
 
-            var user = await _userServices.FindUserByEmailAsync(username);
+            var user = await _userServices.FindUserByUsernameAsync(username);
             if (user == null) return BadRequest();
+
+            //Проверка валидности рефреш токена
+            if (token.RefreshToken != user.RefreshToken || DateTime.Now > user.TokenExpires)
+            {
+                return Unauthorized();
+            }
 
             var newAccessToken = _tokenService.CreateToken(user);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
+            await _tokenService.SetRefreshToken(user, newRefreshToken);
+
+            Response.Cookies.Append("auth_access_token", newAccessToken);
+            Response.Cookies.Append("refreshToken", newRefreshToken.Token);
 
             return new ObjectResult(new
             {

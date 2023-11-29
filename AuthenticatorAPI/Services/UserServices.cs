@@ -4,6 +4,7 @@ using AuthenticatorAPI.Models.Request;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace AuthenticatorAPI.Services
 {
@@ -13,13 +14,13 @@ namespace AuthenticatorAPI.Services
     public class UserServices : IUserServices
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<User> _roleManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMapper _mappingProfile;
-        public UserServices(UserManager<User> userManager, IMapper mappingProfile)
+        public UserServices(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IMapper mappingProfile)
         {
             _userManager = userManager;
             _mappingProfile = mappingProfile;
-           //_roleManager = roleManager;
+            _roleManager = roleManager;
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()
@@ -65,6 +66,31 @@ namespace AuthenticatorAPI.Services
             {
                 var result = await _userManager.AddToRoleAsync(user, role);
             }
+            return;
+        }
+
+        public async Task<User> FindUserByUsernameAsync(string username)
+        {
+            return await _userManager.FindByNameAsync(username);
+        }
+
+        public async Task<IEnumerable<string>> GetRoleByUsernameAsync(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            return userRoles;
+        }
+
+        public async Task UpdateRoleForUser(string username, List<string> newRoles)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            var existingRoles = await _userManager.GetRolesAsync(user);
+            var rolesToAdd = newRoles.Except(existingRoles);
+            var rolesToRemove = existingRoles.Except(newRoles);
+            await _userManager.AddToRolesAsync(user, rolesToAdd);
+            await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+
             return;
         }
     }

@@ -24,18 +24,12 @@ namespace AuthenticatorAPI.Services
             _userManager = userManager;
         }
 
-        public void SetRefreshToken(User user, RefreshToken newRefreshToken)
+        public async Task SetRefreshToken(User user, RefreshToken newRefreshToken)
         {
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = newRefreshToken.Expires,
-            };
-            _httpContextAccessor.HttpContext.Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
-
             user.RefreshToken = newRefreshToken.Token;
             user.TokenCreated = newRefreshToken.Created;
             user.TokenExpires = newRefreshToken.Expires;
+            await _userManager.UpdateAsync(user);
         }
 
         public RefreshToken GenerateRefreshToken()
